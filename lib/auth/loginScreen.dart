@@ -1,5 +1,3 @@
-
-
 import 'dart:developer';
 
 import 'package:appchat/main.dart';
@@ -95,6 +93,35 @@ Future<UserCredential> _signInWithGoogle() async {
                     style: TextStyle(fontWeight: FontWeight.w500)),
                 ]), 
               ))),
+              Positioned(
+          bottom: mq.height * .3, // Position of the new button
+          left: mq.width * .05,
+          width: mq.width * .9,
+          height: mq.height * .07,
+          child: ElevatedButton.icon(
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Color.fromARGB(255, 178, 255, 219),
+              shape: const StadiumBorder(),
+              elevation: 1,
+            ),
+            onPressed: () {
+              Navigator.pushReplacement(context, 
+              MaterialPageRoute(builder: (_) => const Homescreen()));
+            },
+            icon: Icon(Icons.alternate_email, color: Colors.black),
+            label: RichText(
+              text: const TextSpan(
+                style: TextStyle(color: Colors.black, fontSize: 16),
+                children: [
+                  TextSpan(text: "Sign In With "),
+                  TextSpan(
+                      text: "Email",
+                      style: TextStyle(fontWeight: FontWeight.w500)),
+                ]
+              )
+            )
+          )
+        ),
         ]),
     );
   }
