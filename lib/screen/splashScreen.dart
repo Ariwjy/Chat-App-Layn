@@ -1,4 +1,8 @@
+import 'dart:developer';
+
+import 'package:appchat/api/apis.dart';
 import 'package:appchat/auth/loginScreen.dart';
+import 'package:appchat/screen/homeScreen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -23,9 +27,21 @@ class _SplashScreenState extends State<SplashScreen> {
       SystemChrome.setSystemUIOverlayStyle(
         const SystemUiOverlayStyle(statusBarColor: Colors.transparent)
       );
-      Navigator.pushReplacement(
+
+      if(APIs.auth.currentUser != null){
+
+        log('\nUser: ${APIs.auth.currentUser}');
+       
+
+        Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (_) => Homescreen())
+      );
+      }else{
+        Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (_) => Loginscreen())
       );
+      }
+
     });
   }
 
