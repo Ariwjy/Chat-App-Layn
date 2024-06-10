@@ -82,7 +82,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           right: 0,
                           child: MaterialButton(
                             elevation: 1,
-                            onPressed: () {},
+                            onPressed: () {
+                              _showBottomSheet();
+                            },
                             color: Colors.white,
                             shape: const CircleBorder(),
                             child: Icon(Icons.edit, color: Colors.blue,
@@ -161,4 +163,48 @@ class _ProfileScreenState extends State<ProfileScreen> {
           )),
     );
   }
+  void _showBottomSheet(){
+    showModalBottomSheet(
+      context: context,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+      builder: (_) {
+      return ListView(
+        shrinkWrap: true,
+        padding: 
+            EdgeInsets.only(top:mq.height * .03, bottom: mq.height * .05),
+        children: [
+          const Text('Choose Profile Picture',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.w500)),
+
+          SizedBox(height: mq.height * .02),
+          
+          
+          Row (
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children : [
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  shape: const CircleBorder(),
+                  fixedSize: Size(mq.width * .3, mq.height * .15)),
+                onPressed: (){},
+                child: Image.asset('images/add_image.png')),
+
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.white,
+                  shape: const CircleBorder(),
+                  fixedSize: Size(mq.width * .3, mq.height * .15)),
+                onPressed: (){},
+                child: Image.asset('images/camera.png')),
+            ],
+          )
+        ],
+      );
+    });
+  }
 }
+
