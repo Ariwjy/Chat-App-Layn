@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
+import 'dart:developer' as developer;
 import '../models/chat_user.dart';
 
 class APIs{
@@ -24,6 +24,7 @@ class APIs{
     await firestore.collection('users').doc(user.uid).get().then((user) async{
       if (user.exists) {
         me = ChatUser.fromJson(user.data()!);
+        developer.log('My Data: ${user.data()}');
       } else {
         await createUser().then((value) => getSelfInfo());
       }
@@ -59,5 +60,10 @@ class APIs{
       .snapshots();
   }
 
-
+  static Future<void> updateUserInfo()async {
+    await firestore.collection('users').doc(user.uid).update({
+      'name' : me.name,
+      'about' : me.about,
+    });
+  }
 }
