@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:appchat/api/apis.dart';
 import 'package:appchat/auth/loginScreen.dart';
 import 'package:appchat/helper/dialogs.dart';
@@ -8,6 +10,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'dart:developer' as developer;
+
+import 'package:image_picker/image_picker.dart';
 
 
 class ProfileScreen extends StatefulWidget {
@@ -21,6 +25,8 @@ class ProfileScreen extends StatefulWidget {
 
 class _ProfileScreenState extends State<ProfileScreen> {
   final _formKey = GlobalKey<FormState>();
+  String? _image;
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -66,17 +72,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                     Stack(
                       children: [
+                        _image != null ? 
                         ClipRRect(
-                          borderRadius: BorderRadius.circular(mq.height * .1),
+                          borderRadius: 
+                              BorderRadius.circular(mq.height * .1),
+                          child: Image.file(File(_image!),
+                            width: mq.height * .2,
+                            height: mq.height * .2,
+                            fit: BoxFit.cover))
+                        :
+
+                        ClipRRect(
+                          borderRadius: 
+                              BorderRadius.circular(mq.height * .1),
                           child: CachedNetworkImage(
                             width: mq.height * .2,
                             height: mq.height * .2,
-                            fit: BoxFit.fill,
+                            fit: BoxFit.cover,
                             imageUrl: widget.user.image,
-                            errorWidget: (context, url, error) => const CircleAvatar(
+                            errorWidget: (context, url, error) =>
+                              const CircleAvatar(
                                 child: Icon(CupertinoIcons.person)),
-                          ),
-                        ),
+                              ),
+                            ),
+                        
                         Positioned(
                           bottom: 0,
                           right: 0,
@@ -190,7 +209,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   backgroundColor: Colors.white,
                   shape: const CircleBorder(),
                   fixedSize: Size(mq.width * .3, mq.height * .15)),
-                onPressed: (){},
+                onPressed: () async {
+                  final ImagePicker picker = ImagePicker();
+                  final XFile? image =
+                      await picker.pickImage(source: ImageSource.gallery);
+                  if (image != null) {
+                    developer.log('Image Path: ${image.path} -- MimeType: ${image.mimeType}');
+                    setState(() {
+                      _image = image.path;
+                    });
+                  Navigator.pop(context);
+                  }
+                },
                 child: Image.asset('images/add_image.png')),
 
               ElevatedButton(
@@ -198,7 +228,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   backgroundColor: Colors.white,
                   shape: const CircleBorder(),
                   fixedSize: Size(mq.width * .3, mq.height * .15)),
-                onPressed: (){},
+                onPressed: () async {
+                  final ImagePicker picker = ImagePicker();
+                  
+                  final XFile? image =
+                      await picker.pickImage(source: ImageSource.camera);
+                  if (image != null) {
+                    developer.log('Image Path: ${image.path}}');
+                    setState(() {
+                      _image = image.path;
+                    });
+                  Navigator.pop(context);
+                  }
+                },
                 child: Image.asset('images/camera.png')),
             ],
           )
