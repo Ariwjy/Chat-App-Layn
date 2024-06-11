@@ -23,6 +23,9 @@ class _ChatScreenState extends State<ChatScreen> {
           automaticallyImplyLeading: false,
           flexibleSpace: _appBar(),
         ),
+
+        body: Column(children: [_chatInput()],
+        ),
       ),
     );
   }
@@ -75,6 +78,60 @@ class _ChatScreenState extends State<ChatScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _chatInput() {
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        vertical: mq.height * .01, horizontal: mq.width * .025), 
+      child: Row(
+        children: [
+          Expanded(
+            child: Card(
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+              child: Row(
+                children: [
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.emoji_emotions, color:Colors.blueAccent, size: 25)),
+              
+                const Expanded(
+                  child: TextField(
+                    keyboardType: TextInputType.multiline,
+                    maxLines: null,
+                    decoration: InputDecoration(
+                    hintText: 'Type Something...',
+                    hintStyle: TextStyle(color: Colors.blueAccent),
+                    border: InputBorder.none),
+                )),
+              
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.image, color:Colors.blueAccent, size: 26)),
+              
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.camera_alt_rounded, color:Colors.blueAccent, size: 26)),
+
+                SizedBox(width: mq.width * .02),
+              ],
+              ),
+            ),
+          ),
+      
+      
+      
+          MaterialButton(
+            onPressed: () {}, 
+            minWidth: 0,
+            padding: 
+                const EdgeInsets.only(top: 10, bottom: 10, right: 5, left: 10),
+            shape: const CircleBorder(),
+            color: Colors.green,
+            child: Icon(Icons.send, color: Colors.white, size: 28),)
+        ],
       ),
     );
   }
