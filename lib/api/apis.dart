@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -68,5 +69,23 @@ class APIs{
       'name' : me.name,
       'about' : me.about,
     });
+  }
+
+  static Future<void> updateProfilePicture(File file) async {
+    final ext = file.path.split('.').last;
+    developer.log('Extension: $ext');
+    final ref = storage.ref().child('profile_pictures/${user.uid}.$ext');
+    
+    await ref
+        .putFile(file, SettableMetadata(contentType: 'image/$ext'))
+        .then((p0) {
+      developer.log('Data Transferred: ${p0.bytesTransferred / 1000} kb');
+    });
+
+    me.image = await ref.getDownloadURL();
+    await firestore
+        .collection('users')
+        .doc(user.uid)
+        .update({'image': me.image});
   }
 }
