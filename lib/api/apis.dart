@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'dart:developer' as developer;
 import '../models/chat_user.dart';
 
@@ -11,6 +12,8 @@ class APIs{
 
   //accessing cloud fire store
   static FirebaseFirestore firestore = FirebaseFirestore.instance;
+
+  static FirebaseStorage storage = FirebaseStorage.instance;
 
   static late ChatUser me;
 
