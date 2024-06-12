@@ -67,7 +67,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
             onPressed: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (_) => const LoginScreen()),
+                MaterialPageRoute(builder: (_) => const Loginscreen()),
               );
             },
             icon: Icon(Icons.login), // Add an icon if needed
@@ -99,7 +99,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
             onPressed: () {
               Navigator.pushReplacement(
                 context,
-                MaterialPageRoute(builder: (_) => const SignupScreen()),
+                MaterialPageRoute(builder: (_) => const Signupscreen()),
               );
             },
             icon: Icon(Icons.person_add), // Add an icon if needed

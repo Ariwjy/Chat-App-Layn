@@ -12,14 +12,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class Loginscreen extends StatefulWidget {
+  const Loginscreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<Loginscreen> createState() => _LoginscreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _LoginscreenState extends State<Loginscreen> {
   bool _isSigning = false;
   final FirebaseAuthService _auth = FirebaseAuthService();
   final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
@@ -42,7 +42,7 @@ class _LoginScreenState extends State<LoginScreen> {
         log('\nUser: ${user.user}');
         log('\nUserAdditionalInfo: ${user.additionalUserInfo}');
 
-        if ((await APIs.userExist())) {
+        if ((await APIs.userExists())) {
           Navigator.pushReplacement(
               context, MaterialPageRoute(builder: (_) => const Homescreen()));
         } else {
@@ -167,7 +167,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         Navigator.pushAndRemoveUntil(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const SignupScreen()),
+                              builder: (context) => const Signupscreen()),
                           (route) => false,
                         );
                       },

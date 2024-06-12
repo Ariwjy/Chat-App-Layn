@@ -9,14 +9,14 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:appchat/widgets/toast.dart';
 
-class SignupScreen extends StatefulWidget {
-  const SignupScreen({super.key});
+class Signupscreen extends StatefulWidget {
+  const Signupscreen({super.key});
 
   @override
-  State<SignupScreen> createState() => _SignupScreenState();
+  State<Signupscreen> createState() => _SignupscreenState();
 }
 
-class _SignupScreenState extends State<SignupScreen> {
+class _SignupscreenState extends State<Signupscreen> {
   bool isSigningUp = false;
   final FirebaseAuthService _auth = FirebaseAuthService();
   final TextEditingController _usernameController = TextEditingController();
@@ -195,7 +195,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       onTap: () {
                         Navigator.pushAndRemoveUntil(
                           context,
-                          MaterialPageRoute(builder: (context) => const LoginScreen()),
+                          MaterialPageRoute(builder: (context) => const Loginscreen()),
                           (route) => false,
                         );
                       },
