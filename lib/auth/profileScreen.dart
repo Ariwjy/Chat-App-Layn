@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:appchat/api/apis.dart';
 import 'package:appchat/auth/loginScreen.dart';
 import 'package:appchat/helper/dialogs.dart';
@@ -44,10 +45,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
               backgroundColor: Colors.redAccent,
               onPressed: () async {
                 Dialogs.showProgressBar(context);
+                await APIs.updateActiveStatus(false);
                 await APIs.auth.signOut().then((value) async {
                 await GoogleSignIn().signOut().then((value) {
                   Navigator.pop(context);
                   Navigator.pop(context);
+                  APIs.auth = FirebaseAuth.instance;
                   Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => Loginscreen()));
                 });
                   
