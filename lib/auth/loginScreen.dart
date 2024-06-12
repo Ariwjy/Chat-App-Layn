@@ -37,7 +37,7 @@ class _LoginScreenState extends State<Loginscreen> {
         log('\nUser: ${user.user}');
         log('\nUserAdditionalInfo: ${user.additionalUserInfo}');
 
-        if((await APIs.userExist())){
+        if((await APIs.userExists())){
             Navigator.pushReplacement(
             context, MaterialPageRoute(builder: (_) => const Homescreen()));
         }else{
