@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:appchat/api/apis.dart';
 import 'package:appchat/auth/profileScreen.dart';
 import 'package:appchat/main.dart';
@@ -5,6 +8,7 @@ import 'package:appchat/models/chat_user.dart';
 import 'package:appchat/widgets/chat_user_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class Homescreen extends StatefulWidget {
@@ -22,6 +26,23 @@ class _HomeScreenState extends State<Homescreen> {
   void initState() {
     super.initState();
     APIs.getSelfInfo();
+
+     APIs.updateActiveStatus(true);
+
+    SystemChannels.lifecycle.setMessageHandler((message) {
+      log('Message: $message');
+
+      if (APIs.auth.currentUser != null) {
+        if (message.toString().contains('resume')) {
+          APIs.updateActiveStatus(true);
+        }
+        if (message.toString().contains('pause')) {
+          APIs.updateActiveStatus(false);
+        }
+      }
+
+      return Future.value(message);
+    });
   }
 
   @override
