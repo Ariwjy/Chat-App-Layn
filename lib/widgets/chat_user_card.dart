@@ -1,14 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-
 import '../api/apis.dart';
 import '../helper/my_date_util.dart';
 import '../main.dart';
 import '../models/chat_user.dart';
 import '../models/message.dart';
 import '../screen/chat_screen.dart';
-
 //card to represent a single user in home screen
 class ChatUserCard extends StatefulWidget {
   final ChatUser user;
@@ -16,11 +14,9 @@ class ChatUserCard extends StatefulWidget {
   @override
   State<ChatUserCard> createState() => _ChatUserCardState();
 }
-
 class _ChatUserCardState extends State<ChatUserCard> {
   //last message info (if null --> no message)
   Message? _message;
-
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -43,7 +39,6 @@ class _ChatUserCardState extends State<ChatUserCard> {
               final list =
                   data?.map((e) => Message.fromJson(e.data())).toList() ?? [];
               if (list.isNotEmpty) _message = list[0];
-
               return ListTile(
                 //user profile picture
                 leading: ClipRRect(
@@ -56,13 +51,16 @@ class _ChatUserCardState extends State<ChatUserCard> {
                         const CircleAvatar(child: Icon(CupertinoIcons.person)),
                   ),
                 ),
-
                 //user name
                 title: Text(widget.user.name),
 
                 //last message
                 subtitle: Text(
-                    _message != null ? _message!.msg : widget.user.about,
+                    _message != null
+                        ? _message!.type == Type.image
+                            ? 'image'
+                            : _message!.msg
+                        : widget.user.about,
                     maxLines: 1),
 
                 //last message time
