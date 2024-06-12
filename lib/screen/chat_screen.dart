@@ -7,6 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/foundation.dart' as foundation;
+import '../helper/my_date_util.dart';
 
 import '../api/apis.dart';
 import '../main.dart';
@@ -20,13 +21,12 @@ class ChatScreen extends StatefulWidget {
   State<ChatScreen> createState() => _ChatScreenState();
 }
 class _ChatScreenState extends State<ChatScreen> {
-  //for storing all messages
+
   List<Message> _list = [];
-  //for handling message text changes
+
   final _textController = TextEditingController();
 
-  //showEmoji -- for storing value of showing or hiding emoji
-  //isUploading -- for checking if image is uploading or not?
+
   bool _showEmoji = false, _isUploading = false;
 
   @override
@@ -35,8 +35,7 @@ class _ChatScreenState extends State<ChatScreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: SafeArea(
         child: WillPopScope(
-          //if emojis are shown & back button is pressed then hide emojis
-          //or else simple close current screen on back button click
+
           onWillPop: () {
             if (_showEmoji) {
               setState(() => _showEmoji = !_showEmoji);
@@ -60,11 +59,11 @@ class _ChatScreenState extends State<ChatScreen> {
                     stream: APIs.getAllMessages(widget.user),
                     builder: (context, snapshot) {
                       switch (snapshot.connectionState) {
-                        //if data is loading
+
                         case ConnectionState.waiting:
                         case ConnectionState.none:
                           return const SizedBox();
-                        //if some or all data is loaded then show it
+
                         case ConnectionState.active:
                         case ConnectionState.done:
                           final data = snapshot.data?.docs;
@@ -93,7 +92,6 @@ class _ChatScreenState extends State<ChatScreen> {
                   ),
                 ),
 
-                //progress indicator for showing uploading
                 if (_isUploading)
                   const Align(
                       alignment: Alignment.centerRight,
@@ -102,10 +100,9 @@ class _ChatScreenState extends State<ChatScreen> {
                               EdgeInsets.symmetric(vertical: 8, horizontal: 20),
                           child: CircularProgressIndicator(strokeWidth: 2))),
 
-                //chat input filed
+
                 _chatInput(),
 
-                //show emojis on keyboard emoji button click & vice versa
                 if (_showEmoji)
                   SizedBox(
                     height: mq.height * .35,
@@ -126,46 +123,69 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget _appBar() {
     return InkWell(
       onTap: () {},
-      child: Row(
-        children: [
-          //back button
-          IconButton(
-              onPressed: () => Navigator.pop(context),
-              icon: const Icon(Icons.arrow_back, color: Colors.black54)),
-          //user profile picture
-          ClipRRect(
-            borderRadius: BorderRadius.circular(mq.height * .03),
-            child: CachedNetworkImage(
-              width: mq.height * .05,
-              height: mq.height * .05,
-              imageUrl: widget.user.image,
-              errorWidget: (context, url, error) =>
-                  const CircleAvatar(child: Icon(CupertinoIcons.person)),
-            ),
-          ),
-          //for adding some space
-          const SizedBox(width: 10),
-          //user name & last seen time
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              //user name
-              Text(widget.user.name,
-                  style: const TextStyle(
-                      fontSize: 16,
-                      color: Colors.black87,
-                      fontWeight: FontWeight.w500)),
-              //for adding some space
-              const SizedBox(height: 2),
-              //last seen time of user
-              const Text('Last seen not available',
-                  style: TextStyle(fontSize: 13, color: Colors.black54)),
-            ],
-          )
-        ],
-      ),
-    );
+        child: StreamBuilder(
+            stream: APIs.getUserInfo(widget.user),
+            builder: (context, snapshot) {
+              final data = snapshot.data?.docs;
+              final list =
+                  data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
+
+              return Row(
+                children: [
+
+                  IconButton(
+                      onPressed: () => Navigator.pop(context),
+                      icon:
+                          const Icon(Icons.arrow_back, color: Colors.black54)),
+
+
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(mq.height * .03),
+                    child: CachedNetworkImage(
+                      width: mq.height * .05,
+                      height: mq.height * .05,
+                      imageUrl:
+                          list.isNotEmpty ? list[0].image : widget.user.image,
+                      errorWidget: (context, url, error) => const CircleAvatar(
+                          child: Icon(CupertinoIcons.person)),
+                    ),
+                  ),
+
+
+                  const SizedBox(width: 10),
+
+
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+
+                      Text(list.isNotEmpty ? list[0].name : widget.user.name,
+                          style: const TextStyle(
+                              fontSize: 16,
+                              color: Colors.black87,
+                              fontWeight: FontWeight.w500)),
+
+
+                      const SizedBox(height: 2),
+
+                      Text(
+                          list.isNotEmpty
+                              ? list[0].isOnline
+                                  ? 'Online'
+                                  : MyDateUtil.getLastActiveTime(
+                                      context: context,
+                                      lastActive: list[0].lastActive)
+                              : MyDateUtil.getLastActiveTime(
+                                  context: context,
+                                  lastActive: widget.user.lastActive),
+                          style: const TextStyle(
+                              fontSize: 13, color: Colors.black54)),
+                    ],
+                  )
+                ],
+              );
+            }));
   }
   // bottom chat input field
   Widget _chatInput() {
