@@ -121,7 +121,14 @@ class APIs {
     await ref.doc(time).set(message.toJson());
   }
 
-   static Stream<QuerySnapshot<Map<String, dynamic>>> getLastMessage(
+   static Future<void> updateMessageReadStatus(Message message) async {
+    firestore
+        .collection('chats/${getConversationID(message.fromId)}/messages/')
+        .doc(message.sent)
+        .update({'read': DateTime.now().millisecondsSinceEpoch.toString()});
+  }
+  
+  static Stream<QuerySnapshot<Map<String, dynamic>>> getLastMessage(
       ChatUser user) {
     return firestore
         .collection('chats/${getConversationID(user.id)}/messages/')
@@ -129,5 +136,4 @@ class APIs {
         .limit(1)
         .snapshots();
   }
-  
 }

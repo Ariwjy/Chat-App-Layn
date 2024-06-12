@@ -1,15 +1,16 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 
 import '../api/apis.dart';
+import '../helper/my_date_util.dart';
 import '../main.dart';
 import '../models/message.dart';
 
 // for showing single message details
 class MessageCard extends StatefulWidget {
   const MessageCard({super.key, required this.message});
-
   final Message message;
-
   @override
   State<MessageCard> createState() => _MessageCardState();
 }
@@ -23,6 +24,11 @@ class _MessageCardState extends State<MessageCard> {
 
   // sender or another user message
   Widget _blueMessage() {
+    //update last read message if sender and receiver are different
+    if (widget.message.read.isEmpty) {
+      APIs.updateMessageReadStatus(widget.message);
+    }
+
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -46,19 +52,18 @@ class _MessageCardState extends State<MessageCard> {
             ),
           ),
         ),
-
         //message time
         Padding(
           padding: EdgeInsets.only(right: mq.width * .04),
           child: Text(
-            widget.message.sent,
+            MyDateUtil.getFormattedTime(
+                context: context, time: widget.message.sent),
             style: const TextStyle(fontSize: 13, color: Colors.black54),
           ),
         ),
       ],
     );
   }
-
   // our or user message
   Widget _greenMessage() {
     return Row(
@@ -71,19 +76,20 @@ class _MessageCardState extends State<MessageCard> {
             SizedBox(width: mq.width * .04),
 
             //double tick blue icon for message read
-            const Icon(Icons.done_all_rounded, color: Colors.blue, size: 20),
+            if (widget.message.read.isNotEmpty)
+              const Icon(Icons.done_all_rounded, color: Colors.blue, size: 20),
 
             //for adding some space
             const SizedBox(width: 2),
 
-            //read time
+            //sent time
             Text(
-              '${widget.message.read}12:00 AM',
+              MyDateUtil.getFormattedTime(
+                  context: context, time: widget.message.sent),
               style: const TextStyle(fontSize: 13, color: Colors.black54),
             ),
           ],
         ),
-
         //message content
         Flexible(
           child: Container(
