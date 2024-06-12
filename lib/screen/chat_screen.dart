@@ -1,8 +1,12 @@
+import 'dart:convert';
+import 'dart:developer';
+
 import 'package:appchat/models/chat_user.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import '../api/apis.dart';
 import '../main.dart';
 
 class ChatScreen extends StatefulWidget {
@@ -28,7 +32,7 @@ class _ChatScreenState extends State<ChatScreen> {
           children: [
             Expanded(
               child: StreamBuilder(
-              // stream: APIs.getAllUsers(),
+              stream: APIs.getAllMessages(),
               builder: (context, snapshot) {
                 switch (snapshot.connectionState) {
                   //if data is loading
@@ -38,7 +42,8 @@ class _ChatScreenState extends State<ChatScreen> {
                       
                   case ConnectionState.active:
                   case ConnectionState.done:
-                      // final data = snapshot.data?.docs;
+                      final data = snapshot.data?.docs;
+                      log('Data: ${jsonEncode(data![0].data())}');
                       // _list = data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
                         
                      final _list = ['hii','hello'];
