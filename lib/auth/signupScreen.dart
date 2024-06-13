@@ -1,12 +1,9 @@
-import 'package:appchat/api/apis.dart';
 import 'package:appchat/auth/loginScreen.dart';
 import 'package:appchat/firebase/firebase_email_implementation.dart';
-import 'package:appchat/helper/dialogs.dart';
-import 'package:appchat/main.dart';
 import 'package:appchat/screen/homeScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:appchat/models/form_container.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:google_sign_in/google_sign_in.dart';
 import 'package:appchat/widgets/toast.dart';
 
 class Signupscreen extends StatefulWidget {
@@ -57,6 +54,14 @@ class _SignupscreenState extends State<Signupscreen> {
 
     if (email.isEmpty) {
       _showWarning('Email cannot be empty.');
+      setState(() {
+        isSigningUp = false;
+      });
+      return;
+    }
+
+    if (password.isEmpty || confirmPassword.isEmpty) {
+      _showWarning('Password and cannot be empty.');
       setState(() {
         isSigningUp = false;
       });
@@ -121,46 +126,28 @@ class _SignupscreenState extends State<Signupscreen> {
                   style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 30),
-                TextField(
+                FormContainer(
                   controller: _usernameController,
-                  decoration: InputDecoration(
-                    hintText: "Username",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
+                  hintText: "Username",
+                  isPasswordField: false,
                 ),
                 const SizedBox(height: 10),
-                TextField(
+                FormContainer(
                   controller: _emailController,
-                  decoration: InputDecoration(
-                    hintText: "Email",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
+                  hintText: "Email",
+                  isPasswordField: false,
                 ),
                 const SizedBox(height: 10),
-                TextField(
+                FormContainer(
                   controller: _passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    hintText: "Password",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
+                  hintText: "Password",
+                  isPasswordField: true,
                 ),
                 const SizedBox(height: 10),
-                TextField(
+                FormContainer(
                   controller: _confirmPasswordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    hintText: "Confirm Password",
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                  ),
+                  hintText: "Comfirm Password",
+                  isPasswordField: true,
                 ),
                 const SizedBox(height: 30),
                 GestureDetector(
