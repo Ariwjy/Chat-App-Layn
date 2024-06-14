@@ -212,7 +212,7 @@ class _MessageCardState extends State<MessageCard> {
                         try {
                           log('Image Url: ${widget.message.msg}');
                           await GallerySaver.saveImage(widget.message.msg,
-                                  albumName: 'We Chat')
+                                  albumName: 'LAYN')
                               .then((success) {
                             // for hiding bottom sheet
                             Navigator.pop(context);
