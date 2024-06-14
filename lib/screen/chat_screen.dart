@@ -274,6 +274,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
             ),
           ),
+          
           //send message button
           MaterialButton(
             onPressed: () {
