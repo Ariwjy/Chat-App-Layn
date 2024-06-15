@@ -47,7 +47,7 @@ class _LoginSignupScreenState extends State<LoginSignupScreen> {
               style: TextStyle(
                 fontSize: 24, // Adjust the font size as needed
                 fontWeight: FontWeight.bold,
-                color: Colors.black,
+                color: Colors.blueGrey,
               ),
             ),
           ),
