@@ -152,8 +152,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     // user email label
                     Text(widget.user.email,
-                        style: const TextStyle(
-                            color: Colors.black54, fontSize: 16)),
+                        style:
+                            const TextStyle(color: Colors.grey, fontSize: 16)),
 
                     // for adding some space
                     SizedBox(height: mq.height * .05),
@@ -199,8 +199,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     // update profile button
                     ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                          shape: const StadiumBorder(),
-                          minimumSize: Size(mq.width * .5, mq.height * .06)),
+                        backgroundColor: Colors
+                            .green, // Set the button's background color to green
+                        shape: const StadiumBorder(),
+                        minimumSize: Size(mq.width * .5, mq.height * .06),
+                      ),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
@@ -210,9 +213,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           });
                         }
                       },
-                      icon: const Icon(Icons.edit, size: 28),
-                      label:
-                          const Text('UPDATE', style: TextStyle(fontSize: 16)),
+                      icon: const Icon(Icons.edit,
+                          size: 28,
+                          color: Colors
+                              .white), 
+                      label: const Text('UPDATE',
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: Colors
+                                  .white)),
                     )
                   ],
                 ),

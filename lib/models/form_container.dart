@@ -1,10 +1,6 @@
-
-
 import 'package:flutter/material.dart';
 
-
 class FormContainer extends StatefulWidget {
-
   final TextEditingController? controller;
   final Key? fieldKey;
   final bool? isPasswordField;
@@ -26,18 +22,15 @@ class FormContainer extends StatefulWidget {
     this.onSaved,
     this.validator,
     this.onFieldSubmitted,
-    this.inputType
+    this.inputType,
   });
 
-
   @override
-  _FormContainerState createState() => new _FormContainerState();
+  _FormContainerState createState() => _FormContainerState();
 }
 
 class _FormContainerState extends State<FormContainer> {
-
   bool _obscureText = true;
-
 
   @override
   Widget build(BuildContext context) {
@@ -48,28 +41,41 @@ class _FormContainerState extends State<FormContainer> {
         color: Colors.grey.withOpacity(.35),
         borderRadius: BorderRadius.circular(10),
       ),
-      child: new TextFormField(
+      child: TextFormField(
         style: TextStyle(color: Colors.black),
         controller: widget.controller,
         keyboardType: widget.inputType,
         key: widget.fieldKey,
-        obscureText: widget.isPasswordField == true? _obscureText : false,
+        obscureText: widget.isPasswordField == true ? _obscureText : false,
         onSaved: widget.onSaved,
         validator: widget.validator,
         onFieldSubmitted: widget.onFieldSubmitted,
-        decoration: new InputDecoration(
+        decoration: InputDecoration(
           border: InputBorder.none,
           filled: true,
           hintText: widget.hintText,
-          hintStyle: TextStyle(color: Colors.black45),
-          suffixIcon: new GestureDetector(
-            onTap: () {
-              setState(() {
-                _obscureText = !_obscureText;
-              });
-            },
-            child:
-            widget.isPasswordField==true? Icon(_obscureText ? Icons.visibility_off : Icons.visibility, color: _obscureText == false ? Colors.blue : Colors.grey,) : Text(""),
+          hintStyle: TextStyle(color: Colors.grey),
+          suffixIcon: widget.isPasswordField == true
+              ? GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      _obscureText = !_obscureText;
+                    });
+                  },
+                  child: Icon(
+                    _obscureText ? Icons.visibility_off : Icons.visibility,
+                    color: _obscureText ? Colors.blue : Colors.grey,
+                  ),
+                )
+              : null,
+          // Custom border for TextFormField
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey.withOpacity(0.5)),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.grey.withOpacity(0.7)),
+            borderRadius: BorderRadius.circular(10),
           ),
         ),
       ),
