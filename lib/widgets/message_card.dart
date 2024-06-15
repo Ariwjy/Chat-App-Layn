@@ -114,7 +114,7 @@ class _MessageCardState extends State<MessageCard> {
             Text(
               MyDateUtil.getFormattedTime(
                   context: context, time: widget.message.sent),
-              style: const TextStyle(fontSize: 13, color: Colors.black54),
+              style: const TextStyle(fontSize: 13, color: Colors.grey),
             ),
           ],
         ),
@@ -372,7 +372,7 @@ class _OptionItem extends StatelessWidget {
                 child: Text('    $name',
                     style: const TextStyle(
                         fontSize: 15,
-                        color: Colors.black54,
+                        color: Colors.grey,
                         letterSpacing: 0.5)))
           ]),
         ));

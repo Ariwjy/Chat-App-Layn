@@ -143,7 +143,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 children: [
                   IconButton(
                       onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.arrow_back, color: Colors.white)),
+                      icon: const Icon(Icons.arrow_back, color: Colors.grey)),
 
                   ClipRRect(
                     borderRadius: BorderRadius.circular(mq.height * .03),
@@ -166,7 +166,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       Text(list.isNotEmpty ? list[0].name : widget.user.name,
                           style: TextStyle(
                               fontSize: 16,
-                              color: Colors.white,
+                              color: Colors.grey,
                               fontWeight: FontWeight.w500)),
 
                       const SizedBox(height: 2),
@@ -183,7 +183,7 @@ class _ChatScreenState extends State<ChatScreen> {
                                   lastActive: widget.user.lastActive),
                           style: TextStyle(
                               fontSize: 13,
-                              color: Colors.white54)),
+                              color: Colors.grey)),
                     ],
                   )
                 ],
