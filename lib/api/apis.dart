@@ -4,8 +4,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:http/http.dart';
-
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 import '../models/chat_user.dart';
 import '../models/message.dart';
 
@@ -22,6 +22,28 @@ class APIs {
   static User get user => auth.currentUser!;
 
   static FirebaseMessaging fMessaging = FirebaseMessaging.instance;
+
+    static Future<String> translateMessage(String text, String targetLanguage) async {
+    final url = "http://10.0.2.2:5000/translate";
+
+    final response = await http.post(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+      body: jsonEncode({
+        'q': text,
+        'source': 'auto', 
+        'target': targetLanguage,
+        'format': 'text'
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      final data = jsonDecode(response.body);
+      return data['translatedText'];
+    } else {
+      return 'Translation failed';
+    }
+  }
 
   static Future<void> getFirebaseMessagingToken() async {
     await fMessaging.requestPermission();

@@ -165,127 +165,200 @@ class _MessageCardState extends State<MessageCard> {
         : const Icon(Icons.image_not_supported, size: 70);
   }
 
-  // bottom sheet for modifying message details
-  void _showBottomSheet(bool isMe) {
-    showModalBottomSheet(
-        context: context,
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(20), topRight: Radius.circular(20))),
-        builder: (_) {
-          return ListView(
-            shrinkWrap: true,
-            children: [
-              // black divider
-              Container(
-                height: 4,
-                margin: EdgeInsets.symmetric(
-                    vertical: mq.height * .015, horizontal: mq.width * .4),
-                decoration: BoxDecoration(
-                    color: Colors.grey, borderRadius: BorderRadius.circular(8)),
-              ),
 
-              widget.message.type == Type.text
-                  ?
-                  // copy option
-                  _OptionItem(
-                      icon: const Icon(Icons.copy_all_rounded,
-                          color: Colors.blue, size: 26),
-                      name: 'Copy Text',
-                      onTap: () async {
-                        await Clipboard.setData(
-                                ClipboardData(text: widget.message.msg))
-                            .then((value) {
-                          // for hiding bottom sheet
-                          Navigator.pop(context);
+void _showTranslateDialog(String text) {
+  String targetLanguage = 'en';
 
-                          Dialogs.showSnackBar(context, 'Text Copied!');
-                        });
-                      })
-                  :
-                  // save option
-                  _OptionItem(
-                      icon: const Icon(Icons.download_rounded,
-                          color: Colors.blue, size: 26),
-                      name: 'Save Image',
-                      onTap: () async {
-                        try {
-                          log('Image Url: ${widget.message.msg}');
-                          await GallerySaver.saveImage(widget.message.msg,
-                                  albumName: 'LAYN')
-                              .then((success) {
-                            // for hiding bottom sheet
-                            Navigator.pop(context);
-                            if (success != null && success) {
-                              Dialogs.showSnackBar(
-                                  context, 'Image Successfully Saved!');
-                            }
-                          });
-                        } catch (e) {
-                          log('ErrorWhileSavingImg: $e');
-                        }
-                      }),
-
-              // separator or divider
-              if (isMe)
-                Divider(
-                  color: Colors.black54,
-                  endIndent: mq.width * .04,
-                  indent: mq.width * .04,
-                ),
-
-              // edit option
-              if (widget.message.type == Type.text && isMe)
-                _OptionItem(
-                    icon: const Icon(Icons.edit, color: Colors.blue, size: 26),
-                    name: 'Edit Message',
-                    onTap: () {
-                      // for hiding bottom sheet
-                      Navigator.pop(context);
-
-                      _showMessageUpdateDialog();
-                    }),
-
-              // delete option
-              if (isMe)
-                _OptionItem(
-                    icon: const Icon(Icons.delete_forever,
-                        color: Colors.red, size: 26),
-                    name: 'Delete Message',
-                    onTap: () async {
-                      await APIs.deleteMessage(widget.message).then((value) {
-                        // for hiding bottom sheet
-                        Navigator.pop(context);
+  showDialog(
+    context: context,
+    builder: (BuildContext outerContext) {
+      return StatefulBuilder(
+        builder: (BuildContext innerContext, setState) {
+          return AlertDialog(
+            title: const Text('Translate Message'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                DropdownButton<String>(
+                  value: targetLanguage,
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() {
+                        targetLanguage = value;
                       });
-                    }),
+                    }
+                  },
+                  items: const [
+                    DropdownMenuItem(value: 'en', child: Text('English')),
+                    DropdownMenuItem(value: 'id', child: Text('Indonesia')),
+                    DropdownMenuItem(value: 'tl', child: Text('Filipina')),
+                    DropdownMenuItem(value: 'it', child: Text('Italia')),
+                    DropdownMenuItem(value: 'es', child: Text('Spanish')),
+                    DropdownMenuItem(value: 'fr', child: Text('French')),
+                    DropdownMenuItem(value: 'de', child: Text('German')),
+                    DropdownMenuItem(value: 'zh', child: Text('Chinese')),
+                    DropdownMenuItem(value: 'ja', child: Text('Japanese')),
+                  ],
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(outerContext),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () async {
+                  Navigator.pop(outerContext);
+                  final translatedText = await APIs.translateMessage(text, targetLanguage);
+                  showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Translated Message'),
+                        content: Text(translatedText),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text('Close'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                },
+                child: const Text('Translate'),
+              ),
+            ],
+          );
+        },
+      );
+    },
+  );
+}
 
-              // separator or divider
+
+// bottom sheet for modifying message details
+void _showBottomSheet(bool isMe) {
+  showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(20), topRight: Radius.circular(20))),
+      builder: (_) {
+        return ListView(
+          shrinkWrap: true,
+          children: [
+            // black divider
+            Container(
+              height: 4,
+              margin: EdgeInsets.symmetric(
+                  vertical: mq.height * .015, horizontal: mq.width * .4),
+              decoration: BoxDecoration(
+                  color: Colors.grey, borderRadius: BorderRadius.circular(8)),
+            ),
+            // translate option
+            if (widget.message.type == Type.text)
+              _OptionItem(
+                icon: const Icon(Icons.translate, color: Colors.blue, size: 26),
+                name: 'Translate Text',
+                onTap: () async {
+                  // For hiding bottom sheet
+                  Navigator.pop(context);
+                  _showTranslateDialog(widget.message.msg);
+                },
+              ),
+            // existing options...
+            // copy option
+            if (widget.message.type == Type.text)
+              _OptionItem(
+                icon: const Icon(Icons.copy_all_rounded,
+                    color: Colors.blue, size: 26),
+                name: 'Copy Text',
+                onTap: () async {
+                  await Clipboard.setData(ClipboardData(text: widget.message.msg))
+                      .then((value) {
+                    // For hiding bottom sheet
+                    Navigator.pop(context);
+                    Dialogs.showSnackBar(context, 'Text Copied!');
+                  });
+                },
+              ),
+            // save option
+            if (widget.message.type == Type.image)
+              _OptionItem(
+                icon: const Icon(Icons.download_rounded,
+                    color: Colors.blue, size: 26),
+                name: 'Save Image',
+                onTap: () async {
+                  try {
+                    log('Image Url: ${widget.message.msg}');
+                    await GallerySaver.saveImage(widget.message.msg,
+                            albumName: 'LAYN')
+                        .then((success) {
+                      // For hiding bottom sheet
+                      Navigator.pop(context);
+                      if (success != null && success) {
+                        Dialogs.showSnackBar(context, 'Image Successfully Saved!');
+                      }
+                    });
+                  } catch (e) {
+                    log('ErrorWhileSavingImg: $e');
+                  }
+                },
+              ),
+            if (isMe)
               Divider(
                 color: Colors.black54,
                 endIndent: mq.width * .04,
                 indent: mq.width * .04,
               ),
-
-              // sent time
+            // edit option
+            if (widget.message.type == Type.text && isMe)
               _OptionItem(
-                  icon: const Icon(Icons.remove_red_eye, color: Colors.blue),
-                  name:
-                      'Sent At: ${MyDateUtil.getMessageTime(context: context, time: widget.message.sent)}',
-                  onTap: () {}),
-
-              // read time
+                  icon: const Icon(Icons.edit, color: Colors.blue, size: 26),
+                  name: 'Edit Message',
+                  onTap: () {
+                    // For hiding bottom sheet
+                    Navigator.pop(context);
+                    _showMessageUpdateDialog();
+                  }),
+            // delete option
+            if (isMe)
               _OptionItem(
-                  icon: const Icon(Icons.remove_red_eye, color: Colors.green),
-                  name: widget.message.read.isEmpty
-                      ? 'Read At: Not seen yet'
-                      : 'Read At: ${MyDateUtil.getMessageTime(context: context, time: widget.message.read)}',
-                  onTap: () {}),
-            ],
-          );
-        });
-  }
+                  icon: const Icon(Icons.delete_forever,
+                      color: Colors.red, size: 26),
+                  name: 'Delete Message',
+                  onTap: () async {
+                    await APIs.deleteMessage(widget.message).then((value) {
+                      // For hiding bottom sheet
+                      Navigator.pop(context);
+                    });
+                  }),
+            // separator or divider
+            Divider(
+              color: Colors.black54,
+              endIndent: mq.width * .04,
+              indent: mq.width * .04,
+            ),
+            // sent time
+            _OptionItem(
+                icon: const Icon(Icons.remove_red_eye, color: Colors.blue),
+                name: 'Sent At: ${MyDateUtil.getMessageTime(context: context, time: widget.message.sent)}',
+                onTap: () {}),
+            // read time
+            _OptionItem(
+                icon: const Icon(Icons.remove_red_eye, color: Colors.green),
+                name: widget.message.read.isEmpty
+                    ? 'Read At: Not seen yet'
+                    : 'Read At: ${MyDateUtil.getMessageTime(context: context, time: widget.message.read)}',
+                onTap: () {}),
+          ],
+        );
+      });
+}
 
-  // function to show update message dialog
+
   void _showMessageUpdateDialog() {
     String updatedMsg = widget.message.msg;
 
