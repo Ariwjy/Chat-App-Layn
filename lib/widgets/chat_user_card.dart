@@ -88,7 +88,7 @@ class _ChatUserCardState extends State<ChatUserCard> {
                         Text(
                             MyDateUtil.getLastMessageTime(
                                 context: context, time: _message!.sent),
-                            style: const TextStyle(color: Colors.black54),
+                            style: const TextStyle(color: Colors.grey),
                           ),
               );
             },

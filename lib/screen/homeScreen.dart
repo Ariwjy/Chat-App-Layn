@@ -89,7 +89,7 @@ class _HomeScreenState extends State<Homescreen> {
                   }
                 },      
               )
-            : const Text('Lyne'),
+            : const Text('Layn'),
             actions: [
               //seacrh button
               IconButton(
