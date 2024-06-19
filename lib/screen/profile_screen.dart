@@ -13,6 +13,7 @@ import '../main.dart';
 import '../models/chat_user.dart';
 import '../auth/loginScreen.dart';
 
+//profile screen -- to show signed in user info
 class ProfileScreen extends StatefulWidget {
   final ChatUser user;
 
@@ -33,25 +34,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       onTap: FocusScope.of(context).unfocus,
       child: Scaffold(
           //app bar
-          appBar: AppBar(
-            title: const Text('Profile Screen'),
-            actions: [
-              IconButton(
-                icon: Icon(
-                  Theme.of(context).brightness == Brightness.dark
-                      ? Icons.light_mode
-                      : Icons.dark_mode,
-                ),
-                onPressed: () {
-                  MyApp.of(context).setTheme(
-                    Theme.of(context).brightness == Brightness.dark
-                        ? ThemeMode.light
-                        : ThemeMode.dark,
-                  );
-                },
-              ),
-            ],
-          ),
+          appBar: AppBar(title: const Text('Profile Screen')),
 
           //floating button to log out
           floatingActionButton: Padding(
@@ -152,8 +135,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
                     // user email label
                     Text(widget.user.email,
-                        style:
-                            const TextStyle(color: Colors.grey, fontSize: 16)),
+                        style: const TextStyle(
+                            color: Colors.black54, fontSize: 16)),
 
                     // for adding some space
                     SizedBox(height: mq.height * .05),
@@ -199,11 +182,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     // update profile button
                     ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors
-                            .green, // Set the button's background color to green
-                        shape: const StadiumBorder(),
-                        minimumSize: Size(mq.width * .5, mq.height * .06),
-                      ),
+                          shape: const StadiumBorder(),
+                          minimumSize: Size(mq.width * .5, mq.height * .06)),
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
                           _formKey.currentState!.save();
@@ -213,15 +193,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           });
                         }
                       },
-                      icon: const Icon(Icons.edit,
-                          size: 28,
-                          color: Colors
-                              .white), 
-                      label: const Text('UPDATE',
-                          style: TextStyle(
-                              fontSize: 16,
-                              color: Colors
-                                  .white)),
+                      icon: const Icon(Icons.edit, size: 28),
+                      label:
+                          const Text('UPDATE', style: TextStyle(fontSize: 16)),
                     )
                   ],
                 ),
