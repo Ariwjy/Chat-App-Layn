@@ -88,6 +88,23 @@ class APIs {
       return false;
     }
   }
+
+   // for deleting a chat user from our conversation list
+  static Future<bool> deleteChatUser(String userId) async {
+    try {
+      await firestore
+          .collection('users')
+          .doc(user.uid)
+          .collection('my_users')
+          .doc(userId)
+          .delete();
+      return true;
+    } catch (e) {
+      log('Error deleting user: $e');
+      return false;
+    }
+  }
+
   // for getting current user info
   static Future<void> getSelfInfo() async {
     await firestore.collection('users').doc(user.uid).get().then((user) async {

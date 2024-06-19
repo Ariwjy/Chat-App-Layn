@@ -196,8 +196,6 @@ void _showTranslateDialog(String text) {
                     DropdownMenuItem(value: 'es', child: Text('Spanish')),
                     DropdownMenuItem(value: 'fr', child: Text('French')),
                     DropdownMenuItem(value: 'de', child: Text('German')),
-                    DropdownMenuItem(value: 'zh', child: Text('Chinese')),
-                    DropdownMenuItem(value: 'ja', child: Text('Japanese')),
                   ],
                 ),
               ],
