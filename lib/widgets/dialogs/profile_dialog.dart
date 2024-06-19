@@ -26,16 +26,16 @@ class ProfileDialog extends StatelessWidget {
             Positioned(
                     top: mq.height * .075,
                     left: mq.width * .1,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(mq.height * .25),
-                      child: CachedNetworkImage(
-                        width: mq.width * .5,
-                        fit: BoxFit.cover,
-                        imageUrl: user.image,
-                        errorWidget: (context, url, error) => 
-                        const CircleAvatar(child: Icon(CupertinoIcons.person)),
-                      ),
-                    ),
+                    child: ClipOval(
+  child: CachedNetworkImage(
+    width: mq.height * .25, // Sesuaikan dengan tinggi untuk membuat lingkaran
+    height: mq.height * .25, // Sesuaikan dengan tinggi untuk membuat lingkaran
+    fit: BoxFit.cover,
+    imageUrl: user.image,
+    errorWidget: (context, url, error) => const CircleAvatar(child: Icon(CupertinoIcons.person)),
+  ),
+),
+
                   ),
 
               // user name
@@ -44,7 +44,7 @@ class ProfileDialog extends StatelessWidget {
               top: mq.height * .02,
               width: mq.width * .55, 
               child: Text(user.name,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w500)),
+              style: const TextStyle(color: Colors.black,fontSize: 18, fontWeight: FontWeight.w500)),
             ),
 
             //info button
