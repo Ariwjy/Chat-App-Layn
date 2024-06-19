@@ -119,7 +119,18 @@ class _HomeScreenState extends State<Homescreen> {
                 );
               },
               icon: Icon(Icons.navigate_next),
-  ),
+              ),
+              IconButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => GroupChatHomeScreen(),
+                    ),
+                  );
+                },
+                icon: Icon(Icons.navigate_next),
+              ),
             ],
           ),
         
