@@ -4,6 +4,7 @@ import 'package:appchat/api/apis.dart';
 import 'package:appchat/auth/profileScreen.dart';
 import 'package:appchat/main.dart';
 import 'package:appchat/models/chat_user.dart';
+import 'package:appchat/screen/groupchat/group_chat_screen.dart';
 import 'package:appchat/widgets/chat_user_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -108,6 +109,17 @@ class _HomeScreenState extends State<Homescreen> {
                   context, MaterialPageRoute(
                     builder: (_) => ProfileScreen(user: APIs.me)));
               }, icon: const Icon(Icons.more_vert)),
+              IconButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => GroupChatHomeScreen(),
+                  ),
+                );
+              },
+              icon: Icon(Icons.navigate_next),
+  ),
             ],
           ),
         
@@ -174,6 +186,8 @@ class _HomeScreenState extends State<Homescreen> {
     );
   }
 
+  
+
    // for adding new chat user
   void _addChatUserDialog() {
     String email = '';
@@ -196,6 +210,7 @@ class _HomeScreenState extends State<Homescreen> {
                     size: 28,
                   ),
                   Text('Add User')
+                  
                 ],
               ),
 

@@ -47,13 +47,15 @@ class _ChatUserCardState extends State<ChatUserCard> {
                     showDialog(context: context, builder: (_) => ProfileDialog(user: widget.user) );
                   },
                   child: ClipRRect(
-                    borderRadius: BorderRadius.circular(mq.height * .03),
-                    child: CachedNetworkImage(
-                      width: mq.height * .055,
-                      height: mq.height * .055,
-                      imageUrl: widget.user.image,
-                      errorWidget: (context, url, error) =>
-                          const CircleAvatar(child: Icon(CupertinoIcons.person)),
+                    child: ClipOval(
+                      child: AspectRatio(
+                        aspectRatio: 1,
+                        child: CachedNetworkImage(
+                          imageUrl: widget.user.image,
+                          fit: BoxFit.cover,
+                          errorWidget: (context, url, error) => const Icon(CupertinoIcons.person),
+                        ),
+                      ),
                     ),
                   ),
                 ),
