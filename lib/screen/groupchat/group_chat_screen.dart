@@ -55,23 +55,30 @@ class _GroupChatHomeScreenState extends State<GroupChatHomeScreen> {
               alignment: Alignment.center,
               child: CircularProgressIndicator(),
             )
-          : ListView.builder(
-              itemCount: groupList.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  onTap: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => GroupChatRoom(
-                        groupName: groupList[index]['name'],
-                        groupChatId: groupList[index]['id'],
-                      ),
-                    ),
+          : groupList.isEmpty
+              ? Center(
+                  child: Text(
+                    "No groups available. Create a new group!",
+                    style: TextStyle(fontSize: 18),
                   ),
-                  leading: Icon(Icons.group),
-                  title: Text(groupList[index]['name']),
-                );
-              },
-            ),
+                )
+              : ListView.builder(
+                  itemCount: groupList.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                      onTap: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => GroupChatRoom(
+                            groupName: groupList[index]['name'],
+                            groupChatId: groupList[index]['id'],
+                          ),
+                        ),
+                      ),
+                      leading: Icon(Icons.group),
+                      title: Text(groupList[index]['name']),
+                    );
+                  },
+                ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.create),
         onPressed: () => Navigator.of(context).push(
