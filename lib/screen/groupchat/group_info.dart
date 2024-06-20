@@ -247,7 +247,7 @@ class _GroupInfoState extends State<GroupInfo> {
                             ),
                             subtitle: Text(membersList[index]['email']),
                             trailing: Text(
-                                membersList[index]['isAdmin'] ? "Admin" : ""),
+                                membersList[index]['isAdmin'] ? "isAdmin" : ""),
                           );
                         },
                       ),
