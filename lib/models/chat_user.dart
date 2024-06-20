@@ -30,7 +30,6 @@ class ChatUser {
     isOnline = json['is_online'] ?? '';
     pushToken = json['push_token'] ?? '';
     email = json['email'] ?? '';
-    
   }
 
   Map<String, dynamic> toJson() {

@@ -4,13 +4,14 @@ import 'package:appchat/api/apis.dart';
 import 'package:appchat/auth/profileScreen.dart';
 import 'package:appchat/main.dart';
 import 'package:appchat/models/chat_user.dart';
+import 'package:appchat/models/message.dart';
+import 'package:appchat/screen/groupchat/group_chat_screen.dart';
 import 'package:appchat/widgets/chat_user_card.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../helper/dialogs.dart';
-import '../models/message.dart';
 
 class Homescreen extends StatefulWidget {
   const Homescreen({super.key});
@@ -21,13 +22,19 @@ class Homescreen extends StatefulWidget {
 
 class _HomeScreenState extends State<Homescreen> {
   List<ChatUser> _list = [];
+
+
   final List<ChatUser> _searchList = [];
+
   bool _isSearching = false;
 
-  @override
+
+@override
   void initState() {
     super.initState();
     APIs.getSelfInfo();
+
+     
 
     SystemChannels.lifecycle.setMessageHandler((message) {
       log('Message: $message');
@@ -51,11 +58,11 @@ class _HomeScreenState extends State<Homescreen> {
       onTap: () => FocusScope.of(context).unfocus(),
       child: WillPopScope(
         onWillPop: () {
-          if (_isSearching) {
+          if(_isSearching){
             setState(() {
-              _isSearching = !_isSearching;
+              _isSearching = ! _isSearching;
             });
-          } else {
+          }else{
             return Future.value(true);
           }
           return Future.value(false);
@@ -64,51 +71,59 @@ class _HomeScreenState extends State<Homescreen> {
           //app bar
           appBar: AppBar(
             leading: const Icon(CupertinoIcons.home),
-            title: _isSearching
-                ? TextField(
-                    decoration: const InputDecoration(
-                        border: InputBorder.none, hintText: 'Name, Email, ...'),
-                    autofocus: true,
-                    style: TextStyle(fontSize: 17, letterSpacing: 0.5),
-                    onChanged: (val) {
-                      _searchList.clear();
-
-                      for (var i in _list) {
-                        if (i.name.toLowerCase().contains(val.toLowerCase()) ||
-                            i.email.toLowerCase().contains(val.toLowerCase())) {
-                          _searchList.add(i);
-                        }
-                        setState(() {
-                          _searchList;
-                        });
+            title: _isSearching ?
+            TextField(
+              decoration: const InputDecoration(
+                  border: InputBorder.none, hintText: 'Name, Email, ...'),
+                autofocus: true,
+                style: TextStyle(fontSize: 17, letterSpacing: 0.5),    
+                onChanged: (val){
+                  _searchList.clear();
+        
+                  for (var i in _list) {
+                    if(i.name.toLowerCase().contains(val.toLowerCase()) || 
+                      i.email.toLowerCase().contains(val.toLowerCase())) {
+                        _searchList.add(i);
                       }
-                    },
-                  )
-                : const Text('Layn'),
+                      setState(() {
+                        _searchList;
+                      });
+                  }
+                },      
+              )
+            : const Text('Layn'),
             actions: [
-              //search button
+              //seacrh button
               IconButton(
-                  onPressed: () {
-                    setState(() {
-                      _isSearching = !_isSearching;
-                    });
-                  },
-                  icon: Icon(_isSearching
-                      ? CupertinoIcons.clear_circled_solid
-                      : Icons.search)),
-
+                onPressed: () {
+                  setState(() {
+                    _isSearching =! _isSearching;
+                  });
+                }, 
+                icon: Icon(_isSearching 
+                    ? CupertinoIcons.clear_circled_solid
+                    : Icons.search)),
+        
               //menu button
+              IconButton(onPressed: () {
+                Navigator.push(
+                  context, MaterialPageRoute(
+                    builder: (_) => ProfileScreen(user: APIs.me)));
+              }, icon: const Icon(Icons.more_vert)),
               IconButton(
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (_) => ProfileScreen(user: APIs.me)));
-                  },
-                  icon: const Icon(Icons.more_vert)),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => GroupChatHomeScreen(),
+                  ),
+                );
+              },
+              icon: Icon(Icons.navigate_next),
+              ),
             ],
           ),
-
+        
           //floating button
           floatingActionButton: Padding(
             padding: const EdgeInsets.only(bottom: 10),
@@ -119,8 +134,8 @@ class _HomeScreenState extends State<Homescreen> {
               child: const Icon(Icons.add_comment_rounded),
             ),
           ),
-
-          body: StreamBuilder(
+        
+            body: StreamBuilder(
             stream: APIs.getMyUsersId(),
             builder: (context, snapshot) {
               switch (snapshot.connectionState) {
@@ -217,7 +232,9 @@ class _HomeScreenState extends State<Homescreen> {
     );
   }
 
-  // for adding new chat user
+  
+
+   // for adding new chat user
   void _addChatUserDialog() {
     String email = '';
 
@@ -226,8 +243,10 @@ class _HomeScreenState extends State<Homescreen> {
         builder: (_) => AlertDialog(
               contentPadding: const EdgeInsets.only(
                   left: 24, right: 24, top: 20, bottom: 10),
+
               shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(20)),
+
               //title
               title: const Row(
                 children: [
@@ -237,18 +256,21 @@ class _HomeScreenState extends State<Homescreen> {
                     size: 28,
                   ),
                   Text('Add User')
+                  
                 ],
               ),
+
               //content
               content: TextFormField(
                 maxLines: null,
                 onChanged: (value) => email = value,
                 decoration: InputDecoration(
-                    hintText: 'Email ID',
+                    hintText: 'Email Id',
                     prefixIcon: const Icon(Icons.email, color: Colors.blue),
                     border: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(15))),
               ),
+
               //actions
               actions: [
                 //cancel button
@@ -274,8 +296,10 @@ class _HomeScreenState extends State<Homescreen> {
                         });
                       }
                     },
-                    child: const Text('Add',
-                        style: TextStyle(color: Colors.blue, fontSize: 16)))
+                    child: const Text(
+                      'Add',
+                      style: TextStyle(color: Colors.blue, fontSize: 16),
+                    ))
               ],
             ));
   }

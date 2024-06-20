@@ -16,14 +16,12 @@ class Signupscreen extends StatefulWidget {
 class _SignupscreenState extends State<Signupscreen> {
   bool isSigningUp = false;
   final FirebaseAuthService _auth = FirebaseAuthService();
-  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
 
   @override
   void dispose() {
-    _usernameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -39,18 +37,9 @@ class _SignupscreenState extends State<Signupscreen> {
       isSigningUp = true;
     });
 
-    String username = _usernameController.text;
     String email = _emailController.text;
     String password = _passwordController.text;
     String confirmPassword = _confirmPasswordController.text;
-
-    if (username.isEmpty) {
-      _showWarning('Username cannot be empty.');
-      setState(() {
-        isSigningUp = false;
-      });
-      return;
-    }
 
     if (email.isEmpty) {
       _showWarning('Email cannot be empty.');
@@ -61,7 +50,7 @@ class _SignupscreenState extends State<Signupscreen> {
     }
 
     if (password.isEmpty || confirmPassword.isEmpty) {
-      _showWarning('Password and cannot be empty.');
+      _showWarning('Password and Confirm Password cannot be empty.');
       setState(() {
         isSigningUp = false;
       });
@@ -126,12 +115,6 @@ class _SignupscreenState extends State<Signupscreen> {
                   style: TextStyle(fontSize: 27, fontWeight: FontWeight.bold),
                 ),
                 const SizedBox(height: 30),
-                FormContainer(
-                  controller: _usernameController,
-                  hintText: "Username",
-                  isPasswordField: false,
-                ),
-                const SizedBox(height: 10),
                 FormContainer(
                   controller: _emailController,
                   hintText: "Email",

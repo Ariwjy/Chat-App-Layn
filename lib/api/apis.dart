@@ -89,7 +89,7 @@ class APIs {
     }
   }
 
-   // for deleting a chat user from our conversation list
+  // for deleting a chat user from our conversation list
   static Future<bool> deleteChatUser(String userId) async {
     try {
       await firestore
