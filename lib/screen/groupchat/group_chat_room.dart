@@ -1,8 +1,11 @@
-
 import 'package:appchat/screen/groupchat/group_info.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
+import 'dart:io';
 
 class GroupChatRoom extends StatelessWidget {
   final String groupChatId, groupName;
@@ -13,6 +16,7 @@ class GroupChatRoom extends StatelessWidget {
   final TextEditingController _message = TextEditingController();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final ImagePicker _picker = ImagePicker();
 
   void onSendMessage() async {
     if (_message.text.isNotEmpty) {
@@ -31,6 +35,40 @@ class GroupChatRoom extends StatelessWidget {
           .collection('chats')
           .add(chatData);
     }
+  }
+
+  void onPickImage() async {
+    final XFile? image = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      File imageFile = File(image.path);
+      String fileName = DateTime.now().millisecondsSinceEpoch.toString();
+      Reference storageReference =
+          FirebaseStorage.instance.ref().child('chatImages').child(fileName);
+
+      UploadTask uploadTask = storageReference.putFile(imageFile);
+      TaskSnapshot snapshot = await uploadTask;
+
+      String imageUrl = await snapshot.ref.getDownloadURL();
+
+      Map<String, dynamic> chatData = {
+        "sendBy": _auth.currentUser!.displayName,
+        "message": imageUrl,
+        "type": "img",
+        "time": FieldValue.serverTimestamp(),
+      };
+
+      await _firestore
+          .collection('groups')
+          .doc(groupChatId)
+          .collection('chats')
+          .add(chatData);
+    }
+  }
+
+  String formatTimestamp(Timestamp timestamp) {
+    DateTime dateTime = timestamp.toDate();
+    return DateFormat('hh:mm a').format(dateTime); // Format as 'HH:MM AM/PM'
   }
 
   @override
@@ -53,67 +91,61 @@ class GroupChatRoom extends StatelessWidget {
               icon: Icon(Icons.more_vert)),
         ],
       ),
-      body: SingleChildScrollView(
+      body: SafeArea(
         child: Column(
           children: [
-            Container(
-              height: size.height / 1.27,
-              width: size.width,
-              child: StreamBuilder<QuerySnapshot>(
-                stream: _firestore
-                    .collection('groups')
-                    .doc(groupChatId)
-                    .collection('chats')
-                    .orderBy('time')
-                    .snapshots(),
-                builder: (context, snapshot) {
-                  if (snapshot.hasData) {
-                    return ListView.builder(
-                      itemCount: snapshot.data!.docs.length,
-                      itemBuilder: (context, index) {
-                        Map<String, dynamic> chatMap =
-                            snapshot.data!.docs[index].data()
-                                as Map<String, dynamic>;
+            Expanded(
+              child: Container(
+                child: StreamBuilder<QuerySnapshot>(
+                  stream: _firestore
+                      .collection('groups')
+                      .doc(groupChatId)
+                      .collection('chats')
+                      .orderBy('time')
+                      .snapshots(),
+                  builder: (context, snapshot) {
+                    if (snapshot.hasData) {
+                      return ListView.builder(
+                        itemCount: snapshot.data!.docs.length,
+                        itemBuilder: (context, index) {
+                          Map<String, dynamic> chatMap =
+                              snapshot.data!.docs[index].data()
+                                  as Map<String, dynamic>;
 
-                        return messageTile(size, chatMap);
-                      },
-                    );
-                  } else {
-                    return Container();
-                  }
-                },
+                          return messageTile(size, chatMap);
+                        },
+                      );
+                    } else {
+                      return Container();
+                    }
+                  },
+                ),
               ),
             ),
             Container(
-              height: size.height / 10,
-              width: size.width,
-              alignment: Alignment.center,
-              child: Container(
-                height: size.height / 12,
-                width: size.width / 1.1,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      height: size.height / 17,
-                      width: size.width / 1.3,
-                      child: TextField(
-                        controller: _message,
-                        decoration: InputDecoration(
-                            suffixIcon: IconButton(
-                              onPressed: () {},
-                              icon: Icon(Icons.photo),
-                            ),
-                            hintText: "Send Message",
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                            )),
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: TextField(
+                      controller: _message,
+                      decoration: InputDecoration(
+                        suffixIcon: IconButton(
+                          onPressed: onPickImage,
+                          icon: Icon(Icons.photo),
+                        ),
+                        hintText: "Send Message",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
                       ),
                     ),
-                    IconButton(
-                        icon: Icon(Icons.send), onPressed: onSendMessage),
-                  ],
-                ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.send),
+                    onPressed: onSendMessage,
+                  ),
+                ],
               ),
             ),
           ],
@@ -138,6 +170,7 @@ class GroupChatRoom extends StatelessWidget {
                 color: Colors.blue,
               ),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     chatMap['sendBy'],
@@ -156,6 +189,19 @@ class GroupChatRoom extends StatelessWidget {
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                       color: Colors.white,
+                    ),
+                  ),
+                  SizedBox(
+                    height: size.height / 200,
+                  ),
+                  Text(
+                    chatMap['time'] != null
+                        ? formatTimestamp(chatMap['time'])
+                        : '',
+                    style: TextStyle(
+                      fontSize: 10,
+                      fontWeight: FontWeight.w400,
+                      color: Colors.white70,
                     ),
                   ),
                 ],
