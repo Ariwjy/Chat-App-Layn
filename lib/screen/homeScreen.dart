@@ -118,7 +118,7 @@ class _HomeScreenState extends State<Homescreen> {
                   ),
                 );
               },
-              icon: Icon(Icons.navigate_next),
+              icon: Icon(Icons.group),
               ),
               IconButton(
                 onPressed: () {
@@ -129,7 +129,7 @@ class _HomeScreenState extends State<Homescreen> {
                     ),
                   );
                 },
-                icon: Icon(Icons.navigate_next),
+                icon: Icon(null),
               ),
             ],
           ),
