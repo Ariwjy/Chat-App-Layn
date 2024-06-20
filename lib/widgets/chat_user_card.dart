@@ -11,7 +11,8 @@ import '../screen/chat_screen.dart';
 //card to represent a single user in home screen
 class ChatUserCard extends StatefulWidget {
   final ChatUser user;
-  const ChatUserCard({super.key, required this.user});
+  final Function(ChatUser) onDelete;
+  const ChatUserCard({super.key, required this.user, required this.onDelete});
   @override
   State<ChatUserCard> createState() => _ChatUserCardState();
 }
@@ -32,6 +33,9 @@ class _ChatUserCardState extends State<ChatUserCard> {
                 context,
                 MaterialPageRoute(
                     builder: (_) => ChatScreen(user: widget.user)));
+          },
+          onLongPress: () {
+          _showDeleteDialog();
           },
           child: StreamBuilder(
             stream: APIs.getLastMessage(widget.user),
@@ -97,4 +101,37 @@ class _ChatUserCardState extends State<ChatUserCard> {
           )),
     );
   }
+
+  void _showDeleteDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Delete Chat'),
+          content: const Text('Are you sure you want to delete this chat?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context);
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                bool isDeleted = await APIs.deleteChatUser(widget.user.id);
+                if (isDeleted) {
+                  widget.onDelete(widget.user);
+                }
+                Navigator.pop(context);
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
+
+
+
