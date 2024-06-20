@@ -43,22 +43,33 @@ class _AddMembersInGroupState extends State<AddMembersInGroup> {
   }
 
   void onSearch() async {
-    setState(() {
-      isLoading = true;
-    });
+  setState(() {
+    isLoading = true;
+  });
 
-    await _firestore
-        .collection('users')
-        .where("email", isEqualTo: _search.text)
-        .get()
-        .then((value) {
+  await _firestore
+      .collection('users')
+      .where("email", isEqualTo: _search.text)
+      .get()
+      .then((value) {
+    if (value.docs.isEmpty) {
+      setState(() {
+        isLoading = false;
+      });
+      // Menampilkan pesan peringatan menggunakan SnackBar
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('User doesn\'t exist')),
+      );
+    } else {
       setState(() {
         userMap = value.docs[0].data();
         isLoading = false;
       });
       print(userMap);
-    });
-  }
+    }
+  });
+}
+
 
   void onResultTap() {
     bool isAlreadyExist = false;

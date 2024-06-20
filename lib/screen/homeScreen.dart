@@ -119,7 +119,7 @@ class _HomeScreenState extends State<Homescreen> {
                   ),
                 );
               },
-              icon: Icon(Icons.navigate_next),
+              icon: Icon(Icons.group),
               ),
             ],
           ),

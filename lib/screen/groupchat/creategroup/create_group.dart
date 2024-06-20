@@ -1,4 +1,5 @@
 
+import 'package:appchat/screen/groupchat/group_chat_screen.dart';
 import 'package:appchat/screen/homeScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -52,7 +53,7 @@ class _CreateGroupState extends State<CreateGroup> {
     });
 
     Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (_) => Homescreen()), (route) => false);
+        MaterialPageRoute(builder: (_) => GroupChatHomeScreen()), (route) => false);
   }
 
   @override
