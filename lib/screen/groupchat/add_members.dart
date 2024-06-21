@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 class AddMembersINGroup extends StatefulWidget {
   final String groupChatId, name;
   final List membersList;
-  const AddMembersINGroup(
-      {required this.name,
-      required this.membersList,
-      required this.groupChatId,
-      Key? key})
-      : super(key: key);
+  const AddMembersINGroup({
+    required this.name,
+    required this.membersList,
+    required this.groupChatId,
+    Key? key,
+  }) : super(key: key);
 
   @override
   _AddMembersINGroupState createState() => _AddMembersINGroupState();
@@ -24,7 +24,6 @@ class _AddMembersINGroupState extends State<AddMembersINGroup> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     membersList = widget.membersList;
   }
@@ -39,27 +38,84 @@ class _AddMembersINGroupState extends State<AddMembersINGroup> {
         .where("email", isEqualTo: _search.text)
         .get()
         .then((value) {
+      if (value.docs.isEmpty) {
+        _showUserNotFoundDialog();
+      } else {
+        setState(() {
+          userMap = value.docs[0].data();
+        });
+      }
+    }).catchError((error) {
+      print("Error searching user: $error");
+    }).whenComplete(() {
       setState(() {
-        userMap = value.docs[0].data();
         isLoading = false;
       });
-      print(userMap);
     });
   }
 
   void onAddMembers() async {
-    membersList.add(userMap);
+    if (userMap != null) {
+      userMap!['isAdmin'] = false; // Add isAdmin field and set it to false
+      membersList.add(userMap!);
 
-    await _firestore.collection('groups').doc(widget.groupChatId).update({
-      "members": membersList,
-    });
+      await _firestore.collection('groups').doc(widget.groupChatId).update({
+        "members": membersList,
+      });
 
-    await _firestore
-        .collection('users')
-        .doc(userMap!['id'])
-        .collection('groups')
-        .doc(widget.groupChatId)
-        .set({"name": widget.name, "id": widget.groupChatId});
+      await _firestore
+          .collection('users')
+          .doc(userMap!['id'])
+          .collection('groups')
+          .doc(widget.groupChatId)
+          .set({
+        "name": widget.name,
+        "id": widget.groupChatId,
+        "isAdmin": false, // Ensure this field is also set in the user's group document
+      });
+
+      _showMemberAddedDialog();
+    }
+  }
+
+  void _showUserNotFoundDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("User Not Found"),
+          content: Text("The user with the provided email doesn't exist."),
+          actions: <Widget>[
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _showMemberAddedDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text("Member Added"),
+          content: Text("The member has been successfully added to the group."),
+          actions: <Widget>[
+            TextButton(
+              child: Text("OK"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 
   @override

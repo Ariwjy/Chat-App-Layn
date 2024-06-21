@@ -4,6 +4,7 @@ import 'package:appchat/api/apis.dart';
 import 'package:appchat/auth/profileScreen.dart';
 import 'package:appchat/main.dart';
 import 'package:appchat/models/chat_user.dart';
+import 'package:appchat/models/message.dart';
 import 'package:appchat/screen/groupchat/group_chat_screen.dart';
 import 'package:appchat/widgets/chat_user_card.dart';
 import 'package:flutter/cupertino.dart';
@@ -119,6 +120,7 @@ class _HomeScreenState extends State<Homescreen> {
                 );
               },
               icon: Icon(Icons.group),
+
               ),
               IconButton(
                 onPressed: () {
@@ -130,6 +132,7 @@ class _HomeScreenState extends State<Homescreen> {
                   );
                 },
                 icon: Icon(null),
+
               ),
             ],
           ),
@@ -149,7 +152,6 @@ class _HomeScreenState extends State<Homescreen> {
             stream: APIs.getMyUsersId(),
             builder: (context, snapshot) {
               switch (snapshot.connectionState) {
-                //if data is loading
                 case ConnectionState.waiting:
                 case ConnectionState.none:
                   return const Center(child: CircularProgressIndicator());
@@ -162,30 +164,76 @@ class _HomeScreenState extends State<Homescreen> {
                     stream: APIs.getAllUsers(userIds),
                     builder: (context, snapshot) {
                       switch (snapshot.connectionState) {
-                        //if data is loading
                         case ConnectionState.waiting:
                         case ConnectionState.none:
-                         // return const Center(child: CircularProgressIndicator());
+                          return const Center(child: CircularProgressIndicator());
 
                         case ConnectionState.active:
                         case ConnectionState.done:
                           final data = snapshot.data?.docs;
-                          _list = data
-                                  ?.map((e) => ChatUser.fromJson(e.data()))
-                                  .toList() ??
-                              [];
-                          if (_list.isNotEmpty) {
-                            return ListView.builder(
+                          _list = data?.map((e) => ChatUser.fromJson(e.data())).toList() ?? [];
+
+                          if (_list.isEmpty) {
+                            return const Center(
+                              child: Text('No Contact Added', style: TextStyle(fontSize: 20)),
+                            );
+                          }
+
+                          // Fetch the last message for each user and store it in a map
+                          Map<String, Message> lastMessages = {};
+                          List<Future<void>> futures = [];
+
+                          for (ChatUser user in _list) {
+                            futures.add(
+                              APIs.getLastMessage(user).first.then((snapshot) {
+                                if (snapshot.docs.isNotEmpty) {
+                                  lastMessages[user.id] = Message.fromJson(snapshot.docs.first.data());
+                                }
+                              }),
+                            );
+                          }
+
+                          // Wait for all futures to complete
+                          return FutureBuilder(
+                            future: Future.wait(futures),
+                            builder: (context, _) {
+                              if (_.connectionState == ConnectionState.waiting) {
+                                return const Center(child: CircularProgressIndicator());
+                              }
+
+                              // Sort users based on the timestamp of their last message
+                              _list.sort((a, b) {
+                                final aLastMessage = lastMessages[a.id];
+                                final bLastMessage = lastMessages[b.id];
+
+                                if (aLastMessage == null && bLastMessage == null) return 0;
+                                if (aLastMessage == null) return 1;
+                                if (bLastMessage == null) return -1;
+
+                                return bLastMessage.sent.compareTo(aLastMessage.sent);
+                              });
+
+                              return ListView.builder(
                                 itemCount: _isSearching ? _searchList.length : _list.length,
-                                padding: EdgeInsets.only(top: mq.height * .01),
+                                padding: EdgeInsets.only(top: MediaQuery.of(context).size.height * .01),
                                 physics: BouncingScrollPhysics(),
                                 itemBuilder: (context, index) {
+                                  final user = _isSearching ? _searchList[index] : _list[index];
                                   return ChatUserCard(
-                                      user: _isSearching ? _searchList[index] : _list[index]);
-                                });
-                          } else {
-                            return const Center(child: Text('No connections found!!!', style: TextStyle(fontSize: 20)));
-                          }
+                                    user: user,
+                                    onDelete: (deletedUser) {
+                                      setState(() {
+                                        _list.remove(deletedUser);
+                                        if (_isSearching) {
+                                          _searchList.remove(deletedUser);
+                                        }
+                                      });
+                                    },
+                                  );
+                                },
+                              );
+                            },
+                          );
                       }
                     },
                   );

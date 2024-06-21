@@ -1,5 +1,3 @@
-
-
 import 'package:appchat/screen/groupchat/add_members.dart';
 import 'package:appchat/screen/homeScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -25,7 +23,6 @@ class _GroupInfoState extends State<GroupInfo> {
   @override
   void initState() {
     super.initState();
-
     getGroupDetails();
   }
 
@@ -35,8 +32,7 @@ class _GroupInfoState extends State<GroupInfo> {
         .doc(widget.groupId)
         .get()
         .then((chatMap) {
-      membersList = chatMap['members'];
-      print(membersList);
+      membersList = List<Map<String, dynamic>>.from(chatMap['members']);
       isLoading = false;
       setState(() {});
     });
@@ -44,7 +40,6 @@ class _GroupInfoState extends State<GroupInfo> {
 
   bool checkAdmin() {
     bool isAdmin = false;
-
     membersList.forEach((element) {
       if (element['id'] == _auth.currentUser!.uid) {
         isAdmin = element['isAdmin'];
@@ -55,7 +50,6 @@ class _GroupInfoState extends State<GroupInfo> {
 
   Future removeMembers(int index) async {
     String uid = membersList[index]['id'];
-
     setState(() {
       isLoading = true;
       membersList.removeAt(index);
@@ -81,17 +75,40 @@ class _GroupInfoState extends State<GroupInfo> {
     if (checkAdmin()) {
       if (_auth.currentUser!.uid != membersList[index]['id']) {
         showDialog(
-            context: context,
-            builder: (context) {
-              return AlertDialog(
-                content: ListTile(
-                  onTap: () => removeMembers(index),
-                  title: Text("Remove This Member"),
-                ),
-              );
-            });
+          context: context,
+          builder: (context) {
+            return AlertDialog(
+              title: Text("Member Options"),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  ListTile(
+                    onTap: () => removeMembers(index),
+                    title: Text("Remove This Member"),
+                  ),
+                  ListTile(
+                    onTap: () => grantAdminAccess(index),
+                    title: Text("Grant Admin Access"),
+                  ),
+                ],
+              ),
+            );
+          },
+        );
       }
     }
+  }
+
+  Future grantAdminAccess(int index) async {
+    setState(() {
+      membersList[index]['isAdmin'] = true;
+    });
+
+    await _firestore.collection('groups').doc(widget.groupId).update({
+      "members": membersList,
+    });
+
+    Navigator.of(context).pop(); // Close the dialog
   }
 
   Future onLeaveGroup() async {
@@ -122,6 +139,27 @@ class _GroupInfoState extends State<GroupInfo> {
         (route) => false,
       );
     }
+  }
+
+  Future deleteGroup() async {
+    // Hapus grup dari Firestore
+    await _firestore.collection('groups').doc(widget.groupId).delete();
+
+    // Hapus referensi grup dari koleksi users
+    for (var member in membersList) {
+      await _firestore
+          .collection('users')
+          .doc(member['id'])
+          .collection('groups')
+          .doc(widget.groupId)
+          .delete();
+    }
+
+    // Kembali ke halaman sebelumnya setelah grup dihapus
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (_) => Homescreen()),
+      (route) => false,
+    );
   }
 
   @override
@@ -181,8 +219,6 @@ class _GroupInfoState extends State<GroupInfo> {
                         ],
                       ),
                     ),
-
-                    //
 
                     SizedBox(
                       height: size.height / 20,
@@ -247,9 +283,25 @@ class _GroupInfoState extends State<GroupInfo> {
                             ),
                             subtitle: Text(membersList[index]['email']),
                             trailing: Text(
-                                membersList[index]['isAdmin'] ? "Admin" : ""),
+                                membersList[index]['isAdmin'] ? "isAdmin" : ""),
                           );
                         },
+                      ),
+                    ),
+
+                    ListTile(
+                      onTap: deleteGroup,
+                      leading: Icon(
+                        Icons.delete,
+                        color: Colors.redAccent,
+                      ),
+                      title: Text(
+                        "Delete Group",
+                        style: TextStyle(
+                          fontSize: size.width / 22,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.redAccent,
+                        ),
                       ),
                     ),
 
