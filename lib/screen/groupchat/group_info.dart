@@ -289,21 +289,23 @@ class _GroupInfoState extends State<GroupInfo> {
                       ),
                     ),
 
-                    ListTile(
-                      onTap: deleteGroup,
-                      leading: Icon(
-                        Icons.delete,
-                        color: Colors.redAccent,
-                      ),
-                      title: Text(
-                        "Delete Group",
-                        style: TextStyle(
-                          fontSize: size.width / 22,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.redAccent,
-                        ),
-                      ),
-                    ),
+                    checkAdmin()
+                        ? ListTile(
+                            onTap: deleteGroup,
+                            leading: Icon(
+                              Icons.delete,
+                              color: Colors.redAccent,
+                            ),
+                            title: Text(
+                              "Delete Group",
+                              style: TextStyle(
+                                fontSize: size.width / 22,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.redAccent,
+                              ),
+                            ),
+                          )
+                        : SizedBox(),
 
                     ListTile(
                       onTap: onLeaveGroup,
