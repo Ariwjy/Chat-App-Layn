@@ -1,6 +1,5 @@
 
 import 'package:appchat/screen/groupchat/group_chat_screen.dart';
-import 'package:appchat/screen/homeScreen.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';

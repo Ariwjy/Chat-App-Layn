@@ -354,8 +354,7 @@ class _GroupChatRoomState extends State<GroupChatRoom> {
 
   Widget messageTile(Size size, Map<String, dynamic> chatMap) {
     bool isMe = chatMap['sendBy'] == _auth.currentUser!.displayName;
-    bool isRead =
-        chatMap['isRead'] ?? false; // Assume 'isRead' attribute exists
+   
 
     return Container(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,

@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:appchat/api/apis.dart';
 import 'package:appchat/auth/profileScreen.dart';
-import 'package:appchat/main.dart';
 import 'package:appchat/models/chat_user.dart';
 import 'package:appchat/models/message.dart';
 import 'package:appchat/screen/groupchat/group_chat_screen.dart';
