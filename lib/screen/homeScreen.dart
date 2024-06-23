@@ -103,14 +103,8 @@ class _HomeScreenState extends State<Homescreen> {
                 icon: Icon(_isSearching 
                     ? CupertinoIcons.clear_circled_solid
                     : Icons.search)),
-        
               //menu button
-              IconButton(onPressed: () {
-                Navigator.push(
-                  context, MaterialPageRoute(
-                    builder: (_) => ProfileScreen(user: APIs.me)));
-              }, icon: const Icon(Icons.more_vert)),
-              IconButton(
+               IconButton(
               onPressed: () {
                 Navigator.push(
                   context,
@@ -122,18 +116,17 @@ class _HomeScreenState extends State<Homescreen> {
               icon: Icon(Icons.group),
 
               ),
-              IconButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => GroupChatHomeScreen(),
-                    ),
-                  );
-                },
-                icon: Icon(null),
 
-              ),
+              //menu button
+              IconButton(onPressed: () {
+                Navigator.push(
+                  context, MaterialPageRoute(
+                    builder: (_) => ProfileScreen(user: APIs.me)));
+              }, icon: const Icon(Icons.more_vert)),
+              
+             
+
+             
             ],
           ),
         

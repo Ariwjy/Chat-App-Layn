@@ -107,8 +107,8 @@ class _ChatUserCardState extends State<ChatUserCard> {
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: const Text('Delete Chat'),
-          content: const Text('Are you sure you want to delete this chat?'),
+          title: const Text('Delete User'),
+          content: const Text('Are you sure you want to delete this User?'),
           actions: [
             TextButton(
               onPressed: () {

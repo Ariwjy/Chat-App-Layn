@@ -128,7 +128,6 @@ class _GroupChatRoomState extends State<GroupChatRoom> {
                               return messageTile(size, chatMap);
                             },
                           );
-                          
                         } else {
                           return Container();
                         }
@@ -160,93 +159,108 @@ class _GroupChatRoomState extends State<GroupChatRoom> {
     );
   }
 
- Widget _appBar() {
-  return InkWell(
-    onTap: () => Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => GroupInfo(
-        groupName: widget.groupName,
-        groupId: widget.groupChatId,
-      ),
-    )),
-    child: StreamBuilder<DocumentSnapshot>(
-      stream: _firestore.collection('groups').doc(widget.groupChatId).snapshots(),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return Center(child: CircularProgressIndicator());
-        }
+  Widget _appBar() {
+    return InkWell(
+      onTap: () => Navigator.of(context).push(MaterialPageRoute(
+        builder: (_) => GroupInfo(
+          groupName: widget.groupName,
+          groupId: widget.groupChatId,
+        ),
+      )),
+      child: StreamBuilder<DocumentSnapshot>(
+        stream:
+            _firestore.collection('groups').doc(widget.groupChatId).snapshots(),
+        builder: (context, snapshot) {
+          if (!snapshot.hasData) {
+            return Center(child: CircularProgressIndicator());
+          }
 
-        var data = snapshot.data!.data() as Map<String, dynamic>?;
+          var data = snapshot.data!.data() as Map<String, dynamic>?;
 
-        // Check if data is null or empty
-        if (data == null || !data.containsKey('members')) {
-          return Center(child: Text('No data found'));
-        }
+          // Check if data is null or empty
+          if (data == null || !data.containsKey('members')) {
+            return Center(child: Text('No data found'));
+          }
 
-        // Retrieve members list from Firestore data
-        List<dynamic>? members = data['members'];
+          // Retrieve members list from Firestore data
+          List<dynamic>? members = data['members'];
 
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                IconButton(
-                  onPressed: () => Navigator.pop(context),
-                  icon: const Icon(Icons.arrow_back, color: Colors.grey),
-                ),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(30),
-                  child: CachedNetworkImage(
-                    width: 40,
-                    height: 40,
-                    imageUrl: data['groupImage'] ?? '',
-                    errorWidget: (context, url, error) => const CircleAvatar(
-                      child: Icon(CupertinoIcons.group),
-                    ),
+          return Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  IconButton(
+                    onPressed: () => Navigator.pop(context),
+                    icon: const Icon(Icons.arrow_back, color: Colors.grey),
                   ),
-                ),
-                const SizedBox(width: 10),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      widget.groupName,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.grey,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    if (members != null && members.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Text(
-                          members.length <= 2
-                              ? members.map((member) => member['name']).join(', ')
-                              : '${members[0]['name']}, ${members[1]['name']}, ...',
-                          style: TextStyle(
-                            fontSize: 12,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(30),
+                    child: Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(30),
+                        border: Border.all(
                             color: Colors.grey,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
+                            width: 1), // Border berwarna abu-abu
+                      ),
+                      child: CachedNetworkImage(
+                        imageUrl: data['groupImage'] ?? '',
+                        imageBuilder: (context, imageProvider) => CircleAvatar(
+                          backgroundImage: imageProvider,
+                          backgroundColor: Colors
+                              .grey, // Warna background abu-abu untuk CircleAvatar
+                        ),
+                        placeholder: (context, url) =>
+                            CircularProgressIndicator(),
+                        errorWidget: (context, url, error) => CircleAvatar(
+                          backgroundColor: Colors
+                              .grey, // Jika terjadi kesalahan, tampilkan CircleAvatar abu-abu
+                          child: Icon(CupertinoIcons.group),
                         ),
                       ),
-                  ],
-                ),
-              ],
-            ),
-          ],
-        );
-      },
-    ),
-  );
-}
-
-
-
-
-
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        widget.groupName,
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      if (members != null && members.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 4),
+                          child: Text(
+                            members.length <= 2
+                                ? members
+                                    .map((member) => member['name'])
+                                    .join(', ')
+                                : '${members[0]['name']}, ${members[1]['name']}, ...',
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey,
+                            ),
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
 
   Widget _chatInput(Size size) {
     return Padding(

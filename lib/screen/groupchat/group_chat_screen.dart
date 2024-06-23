@@ -100,11 +100,6 @@ class _GroupChatHomeScreenState extends State<GroupChatHomeScreen> {
                     : Icons.search)),
         
               //menu button
-              IconButton(onPressed: () {
-                Navigator.push(
-                  context, MaterialPageRoute(
-                    builder: (_) => ProfileScreen(user: APIs.me)));
-              }, icon: const Icon(Icons.more_vert)),
               IconButton(
               onPressed: () {
                 Navigator.push(
@@ -116,6 +111,13 @@ class _GroupChatHomeScreenState extends State<GroupChatHomeScreen> {
               },
               icon: Icon(Icons.group),
               ),
+              IconButton(onPressed: () {
+                Navigator.push(
+                  context, MaterialPageRoute(
+                    builder: (_) => ProfileScreen(user: APIs.me)));
+              }, icon: const Icon(Icons.more_vert)),
+              
+
             ],
           ),
       body: isLoading

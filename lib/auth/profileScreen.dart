@@ -199,8 +199,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     // update profile button
                     ElevatedButton.icon(
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors
-                            .green, // Set the button's background color to green
+                        backgroundColor: Color.fromARGB(255, 109, 168, 216), // Set the button's background color to green
                         shape: const StadiumBorder(),
                         minimumSize: Size(mq.width * .5, mq.height * .06),
                       ),

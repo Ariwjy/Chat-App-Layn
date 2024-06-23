@@ -120,6 +120,7 @@ class _GroupInfoState extends State<GroupInfo> {
       for (int i = 0; i < membersList.length; i++) {
         if (membersList[i]['id'] == _auth.currentUser!.uid) {
           membersList.removeAt(i);
+          break; // Break the loop once user is found and removed
         }
       }
 
@@ -239,8 +240,6 @@ class _GroupInfoState extends State<GroupInfo> {
                       height: size.height / 20,
                     ),
 
-                    // Members Name
-
                     checkAdmin()
                         ? ListTile(
                             onTap: () => Navigator.of(context).push(
@@ -307,21 +306,24 @@ class _GroupInfoState extends State<GroupInfo> {
                           )
                         : SizedBox(),
 
-                    ListTile(
-                      onTap: onLeaveGroup,
-                      leading: Icon(
-                        Icons.logout,
-                        color: Colors.redAccent,
-                      ),
-                      title: Text(
-                        "Leave Group",
-                        style: TextStyle(
-                          fontSize: size.width / 22,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.redAccent,
-                        ),
-                      ),
-                    ),
+                    // Conditionally render Leave Group button based on isAdmin
+                    checkAdmin()
+                        ? SizedBox()
+                        : ListTile(
+                            onTap: onLeaveGroup,
+                            leading: Icon(
+                              Icons.logout,
+                              color: Colors.redAccent,
+                            ),
+                            title: Text(
+                              "Leave Group",
+                              style: TextStyle(
+                                fontSize: size.width / 22,
+                                fontWeight: FontWeight.w500,
+                                color: Colors.redAccent,
+                              ),
+                            ),
+                          ),
                   ],
                 ),
               ),
