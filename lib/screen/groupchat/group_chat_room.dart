@@ -392,9 +392,7 @@ class _GroupChatRoomState extends State<GroupChatRoom> {
                         fontSize: 10,
                         color: isMe ? Colors.white70 : Colors.black54),
                   ),
-                  if (isMe) // Show blue checkmark if message is from current user and is read
-                    Icon(Icons.done_all,
-                        size: 18, color: isRead ? Colors.blue : Colors.grey),
+                 
                 ],
               ),
             )
