@@ -80,7 +80,7 @@ class _LoginscreenState extends State<Loginscreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text("Welcome to Layn"),
+        
       ),
       body: Center(
         child: Padding(

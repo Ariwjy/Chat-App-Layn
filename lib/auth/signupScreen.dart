@@ -96,7 +96,7 @@ class _SignupscreenState extends State<Signupscreen> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        title: const Text("Create an Account"),
+        
       ),
       body: Center(
         child: Padding(
